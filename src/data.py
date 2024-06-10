@@ -15,9 +15,26 @@ def load_abalone():
     train, test = train_test_split(data, test_size=0.3, shuffle=True, stratify=data["rings"])
     return train, test
 
+def load_internet():
+    data = pd.read_csv(f"{get_workdir()}/dataset/internet/data.csv")
+    # TODO: Create a train test split for abalone
+    mask = data.groupby("rings").count().reset_index()
+    data[data["rings"]]
+    train, test = train_test_split(data, test_size=0.3, shuffle=True, stratify=data["Attack_type"])
+    return train, test
+
+def load_soybean():
+    data = pd.read_csv(f"{get_workdir()}/dataset/soybean/data.csv")
+    train, test = train_test_split(data, test_size=0.3, shuffle=True, stratify=data["Cultivar"])
+    return train, test
+
 def load_dataset(dataset:str)->list[pd.DataFrame]:
     if dataset == "abalone":
         return load_abalone()
+    elif dataset == "internet":
+        return load_internet()
+    elif dataset == "soybean":
+        return load_soybean()
     
 if __name__ == "__main__":
-    print(load_abalone())
+    print(load_soybean())
