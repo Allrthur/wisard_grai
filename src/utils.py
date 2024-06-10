@@ -1,6 +1,8 @@
 import os
 from bitarray import bitarray
 
+SEED = 1
+
 def get_workdir()->str:
     return os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
 
