@@ -85,7 +85,6 @@ def load_internet():
 
     # Encode columns
     column_encoder = create_column_encoder(pd.concat([train_fts, test_fts]))
-    print("column encoder: ", column_encoder)
     train_fts = binarize_dataset(train_fts, column_encoder)
     test_fts = binarize_dataset(test_fts, column_encoder)
 
