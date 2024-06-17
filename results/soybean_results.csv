@@ -1,0 +1,2 @@
+accuracy,precision,recall,f1,args
+0.09375,0.09583333333333333,0.10438725490196077,0.08875,Namespace(dataset='soybean')

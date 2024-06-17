@@ -1,0 +1,2 @@
+accuracy,precision,recall,f1,args
+0.10438247011952191,0.09335982981547893,0.06987783792205852,0.0441436079848592,Namespace(dataset='abalone_stratified')

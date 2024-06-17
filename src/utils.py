@@ -1,5 +1,6 @@
 import os
 from bitarray import bitarray
+import numpy as np
 
 SEED = 1
 
@@ -18,9 +19,6 @@ def save_results(dataset:str, metrics:dict, args:str)->None:
             file.write("accuracy,precision,recall,f1,args\n")
     with open(output_path, mode="a") as file:
         file.write(f"{acc},{prec},{rec},{f1},{args}\n")
-
-def bitarray_to_string(number:bitarray)->str:
-    return str(number).split('\'')[1]
 
 if __name__ == "__main__":
     

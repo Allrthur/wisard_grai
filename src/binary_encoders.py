@@ -19,7 +19,12 @@ class Thermometer:
         try:
             bits_activated = int(math.ceil(((data - self.min)/ self.interval ) * self.num_bits))
         except:
-            print(f"warning: arithmetic error check {data} in the dataset")
+            print(f"Warning: arithmetic error while encoding Thermometer, check {data} in the dataset")
+            print(f"data: ", data)
+            print(f"min: ", self.min)
+            print(f"max: ", self.max)
+            print(f"interval: ", self.interval)
+            print(f"num_bits: ", self.num_bits)
             return bits
         bits[0:bits_activated] = 1
         return bits

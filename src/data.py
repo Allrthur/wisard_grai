@@ -2,7 +2,7 @@
 
 import pandas as pd
 import os
-from utils import get_workdir, bitarray_to_string, SEED
+from utils import get_workdir, SEED
 from binary_encoders import Thermometer, OneHot
 from sklearn.model_selection import train_test_split
 from bitarray import bitarray
@@ -18,13 +18,13 @@ def binarize_dataset(data, column_encoder):
         train_mtx.append(line)
     return train_mtx
 
-def create_column_encoder(data:pd.DataFrame)->dict:
+def create_column_encoder(data:pd.DataFrame, num_bits:int=32)->dict:
     column_encoder = {}
     data_desc = data.describe()
 
     for column in data.columns:
         if column in data_desc.columns: # this is a numerical column
-            column_encoder[column] = Thermometer(min=data_desc[column]["min"],max=data_desc[column]["max"],num_bits=32)
+            column_encoder[column] = Thermometer(min=data_desc[column]["min"],max=data_desc[column]["max"],num_bits=num_bits)
         else: # this is a categorical column
             column_encoder[column] = OneHot(list(data[column].unique()))
     
@@ -68,7 +68,7 @@ def load_abalone(stratify:bool):
     train_fts, test_fts = train.drop(columns=["rings"]), test.drop(columns=["rings"])
 
     # Encode columns
-    column_encoder = create_column_encoder(pd.concat([train_fts, test_fts]))
+    column_encoder = create_column_encoder(pd.concat([train_fts, test_fts]), num_bits=16)
     train_fts = binarize_dataset(train_fts, column_encoder)
     test_fts = binarize_dataset(test_fts, column_encoder)
 
@@ -84,7 +84,7 @@ def load_internet():
     train_fts, test_fts = train.drop(columns=[tgt]), test.drop(columns=[tgt])
 
     # Encode columns
-    column_encoder = create_column_encoder(pd.concat([train_fts, test_fts]))
+    column_encoder = create_column_encoder(pd.concat([train_fts, test_fts]), num_bits=16)
     train_fts = binarize_dataset(train_fts, column_encoder)
     test_fts = binarize_dataset(test_fts, column_encoder)
 
@@ -100,8 +100,42 @@ def load_soybean():
     train_fts, test_fts = train.drop(columns=[tgt]), test.drop(columns=[tgt])
 
     # Encode columns
-    column_encoder = create_column_encoder(pd.concat([train_fts, test_fts]))
-    print("column encoder: ", column_encoder)
+    column_encoder = create_column_encoder(pd.concat([train_fts, test_fts]), num_bits=16)
+    # print("column encoder: ", column_encoder)
+    train_fts = binarize_dataset(train_fts, column_encoder)
+    test_fts = binarize_dataset(test_fts, column_encoder)
+
+    return (train_fts, train_label), (test_fts, test_label)
+
+def load_glass():
+    tgt = "type"
+    data = pd.read_csv(f"{get_workdir()}/dataset/glass/glass.csv")
+    train, test = train_test_split(data, test_size=0.3, shuffle=True, stratify=data[tgt], random_state=SEED)
+    
+    # Separate Target Column
+    train_label, test_label = train[tgt], test[tgt]
+    train_fts, test_fts = train.drop(columns=[tgt]), test.drop(columns=[tgt])
+
+    # Encode columns
+    column_encoder = create_column_encoder(pd.concat([train_fts, test_fts]), num_bits=16)
+    # print("column encoder: ", column_encoder)
+    train_fts = binarize_dataset(train_fts, column_encoder)
+    test_fts = binarize_dataset(test_fts, column_encoder)
+
+    return (train_fts, train_label), (test_fts, test_label)
+
+def load_hepatitis():
+    tgt = "Category"
+    data = pd.read_csv(f"{get_workdir()}/dataset/hepatitis/hcvdat0.csv").drop("Unnamed: 0", axis="columns").dropna()
+    train, test = train_test_split(data, test_size=0.3, shuffle=True, stratify=data[tgt], random_state=SEED)
+    
+    # Separate Target Column
+    train_label, test_label = train[tgt], test[tgt]
+    train_fts, test_fts = train.drop(columns=[tgt]), test.drop(columns=[tgt])
+
+    # Encode columns
+    column_encoder = create_column_encoder(pd.concat([train_fts, test_fts]), num_bits=32)
+    # print("column encoder: ", column_encoder)
     train_fts = binarize_dataset(train_fts, column_encoder)
     test_fts = binarize_dataset(test_fts, column_encoder)
 
@@ -116,28 +150,44 @@ def load_dataset(dataset:str)->list[pd.DataFrame]:
         return load_internet()
     elif dataset == "soybean":
         return load_soybean()
+    elif dataset == "glass":
+        return load_glass()
+    elif dataset == "hepatitis":
+        return load_hepatitis()
     
 if __name__ == "__main__":
-    print("testing load_abalone() with stratification...")
-    train, test = load_abalone(stratify=True)
-    train, _ = train
-    test, _ = test
-    print(len(train), len(test))
+    # print("testing load_abalone() with stratification...")
+    # train, test = load_abalone(stratify=True)
+    # train, _ = train
+    # test, _ = test
+    # print(len(train), len(test))
 
-    print("testing load_abalone() without stratification...")
-    train, test = load_abalone(stratify=False)
-    train, _ = train
-    test, _ = test
-    print(len(train), len(test))
+    # print("testing load_abalone() without stratification...")
+    # train, test = load_abalone(stratify=False)
+    # train, _ = train
+    # test, _ = test
+    # print(len(train), len(test))
 
-    print("testing load_internet()...")
-    train, test = load_internet()
-    train, _ = train
-    test, _ = test
-    print(len(train), len(test))
+    # print("testing load_internet()...")
+    # train, test = load_internet()
+    # train, _ = train
+    # test, _ = test
+    # print(len(train), len(test))
 
-    print("testing load_soybean()...")
-    train, test = load_soybean()
+    # print("testing load_soybean()...")
+    # train, test = load_soybean()
+    # train, _ = train
+    # test, _ = test
+    # print(len(train), len(test))
+
+    # print("testing load_glass()...")
+    # train, test = load_glass()
+    # train, _ = train
+    # test, _ = test
+    # print(len(train), len(test))
+
+    print("testing load_hepatitis()...")
+    train, test = load_hepatitis()
     train, _ = train
     test, _ = test
     print(len(train), len(test))
