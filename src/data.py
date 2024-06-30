@@ -109,7 +109,7 @@ def load_soybean():
 
 def load_glass():
     tgt = "type"
-    data = pd.read_csv(f"{get_workdir()}/dataset/glass/glass.csv")
+    data = pd.read_csv(f"{get_workdir()}/dataset/glass/glass.csv").drop("idx", axis="columns")
     train, test = train_test_split(data, test_size=0.3, shuffle=True, stratify=data[tgt], random_state=SEED)
     
     # Separate Target Column

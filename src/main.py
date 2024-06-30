@@ -42,7 +42,7 @@ if __name__ == "__main__":
     if args.dataset=="abalone" or args.dataset=="abalone_stratified": rams = 5
     elif args.dataset=="internet": rams = 5
     elif args.dataset=="soybean": rams = 5
-    elif args.dataset=="glass": rams = 5
+    elif args.dataset=="glass": rams = 6
     elif args.dataset=="hepatitis": rams = 6
 
     print("ft_len: ", ft_len)
